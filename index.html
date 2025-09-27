@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Shaxsiy Sayt</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: white;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            min-width: 20px;
+        }
+
+        .nav-text {
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 1rem;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--bg-primary);
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+        /* Items */
+        .item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            cursor: grab;
+        }
+
+        .item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            cursor: grabbing;
+        }
+
+        .item.completed {
+            opacity: 0.6;
+            background: var(--bg-tertiary);
+        }
+
+        .item.completed .item-title {
+            text-decoration: line-through;
+        }
+
+        .item-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-checkbox {
+            margin-top: 0.25rem;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .item:hover .item-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn.edit {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Search and Filter */
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-select {
+            min-width: 150px;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Progress */
+        .progress {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Animations */
+        .bounce-in {
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-description {
+            margin-bottom: 2rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .sidebar.collapsed + .main-content {
+                margin-left: 0;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1e293b;
+                --bg-secondary: #334155;
+                --bg-tertiary: #475569;
+                --text-primary: #f1f5f9;
+                --text-secondary: #cbd5e1;
+                --text-muted: #94a3b8;
+                --border: #334155;
+                --border-hover: #475569;
+            }
+        }
+
+        /* File upload */
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .file-upload:hover, .file-upload.dragover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: var(--transition);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <button class="toggle-btn" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="logo-text">Ultra Sayt</div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-text">Bosh Sahifa</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="projects">
+                        <i class="fas fa-folder-open nav-icon"></i>
+                        <span class="nav-text">Loyihalar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="exercises">
+                        <i class="fas fa-dumbbell nav-icon"></i>
+                        <span class="nav-text">Mashqlar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="tasks">
+                        <i class="fas fa-tasks nav-icon"></i>
+                        <span class="nav-text">Vazifalar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="analytics">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Statistika</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard">
+                <div class="page-header">
+                    <h1 class="page-title">Xush kelibsiz! 👋</h1>
+                    <p class="page-subtitle">Sizning shaxsiy produktivlik markazingiz</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProjects">0</div>
+                        <div class="stat-label">Loyihalar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalExercises">0</div>
+                        <div class="stat-label">Mashqlar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Vazifalar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completionRate">0%</div>
+                        <div class="stat-label">Bajarilish</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-clock"></i>
+                                Bugungi Vazifalar
+                            </h3>
+                        </div>
+                        <div id="todayTasks">
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <div class="empty-title">Bugun uchun vazifa yo'q</div>
+                                <div class="empty-description">Yangi vazifa qo'shing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-trophy"></i>
+                                Oxirgi Yutuqlar
+                            </h3>
+                        </div>
+                        <div id="recentAchievements">
+                            <div class="empty-state">
+                                <div class="empty-icon">🏆</div>
+                                <div class="empty-title">Hali yutuq yo'q</div>
+                                <div class="empty-description">Vazifalarni bajarib yutuqlarga erishing</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Page -->
+            <div class="page" id="projects">
+                <div class="page-header">
+                    <h1 class="page-title">Loyihalar 📁</h1>
+                    <p class="page-subtitle">Barcha loyihalaringizni bir joyda boshqaring</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-plus"></i>
+                            Yangi Loyiha
+                        </h3>
+                    </div>
+                    
+                    <form id="projectForm">
+                        <div class="form-group">
+                            <label class="form-label">Loyiha nomi *</label>
+                            <input type="text" class="form-input" id="projectTitle" placeholder="Masalan: Veb-sayt yaratish" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Tavsif</label>
+                            <textarea class="form-textarea" id="projectDescription" placeholder="Loyiha haqida batafsil ma'lumot..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Muhimlik darajasi</label>
+                            <select class="form-select" id="projectPriority">
+                                <option value="low">Past</option>
+                                <option value="medium" selected>O'rta</option>
+                                <option value="high">Yuqori</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Fayl yuklash</label>
+                            <div class="file-upload" id="fileUpload">
+                                <input type="file" id="projectFile" accept=".zip,.rar,.pdf,.doc,.docx">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">Faylni bu yerga tashlang yoki tanlang</div>
+                                <div class="upload-hint">ZIP, RAR, PDF, DOC formatlarini qo'llab-quvvatlaydi</div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Loyiha Qo'shish
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Loyihalar Ro'yxati</h3>
+                    </div>
+                    
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" id="projectSearch" placeholder="Loyihalarni qidirish...">
+                        </div>
+                        <select class="form-select filter-select" id="projectFilter">
+                            <option value="all">Barcha loyihalar</option>
+                            <option value="high">Yuqori muhimlik</option>
+                            <option value="medium">O'rta muhimlik</option>
+                            <option value="low">Past muhimlik</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-2" id="projectsList">
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <div class="empty-title">Hali loyiha yo'q</div>
+                            <div class="empty-description">Birinchi loyihangizni qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercises Page -->
+            <div class="page" id="exercises">
+                <div class="page-header">
+                    <h1 class="page-title">Mashqlar 💪</h1>
+                    <p class="page-subtitle">Kunlik mashqlaringizni kuzatib boring</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-plus"></i>
+                            Yangi Mashq
+                        </h3>
+                    </div>
+                    
+                    <form id="exerciseForm">
+                        <div class="form-group">
+                            <label class="form-label">Mashq nomi *</label>
+                            <input type="text" class="form-input" id="exerciseName" placeholder="Masalan: 30 daqiqa yugurish" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Kategoriya</label>
+                            <select class="form-select" id="exerciseCategory">
+                                <option value="cardio">Kardio</option>
+                                <option value="strength">Kuch</option>
+                                <option value="flexibility">Moslashuvchanlik</option>
+                                <option value="sports">Sport</option>
+                                <option value="other">Boshqa</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Davomiyligi (daqiqa)</label>
+                            <input type="number" class="form-input" id="exerciseDuration" placeholder="30" min="1">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Mashq Qo'shish
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mashqlar Ro'yxati</h3>
+                    </div>
+                    
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" id="exerciseSearch" placeholder="Mashqlarni qidirish...">
+                        </div>
+                        <select class="form-select filter-select" id="exerciseFilter">
+                            <option value="all">Barcha mashqlar</option>
+                            <option value="completed">Bajarilgan</option>
+                            <option value="pending">Kutilayotgan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-3" id="exercisesList">
+                        <div class="empty-state">
+                            <div class="empty-icon">💪</div>
+                            <div class="empty-title">Hali mashq yo'q</div>
+                            <div class="empty-description">Birinchi mashqingizni qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Page -->
+            <div class="page" id="tasks">
+                <div class="page-header">
+                    <h1 class="page-title">Vazifalar ✅</h1>
+                    <p class="page-subtitle">Kunlik vazifalaringizni tartibga soling</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-plus"></i>
+                            Yangi Vazifa
+                        </h3>
+                    </div>
+                    
+                    <form id="taskForm">
+                        <div class="form-group">
+                            <label class="form-label">Vazifa nomi *</label>
+                            <input type="text" class="form-input" id="taskName" placeholder="Masalan: Hisobot tayyorlash" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Tavsif</label>
+                            <textarea class="form-textarea" id="taskDescription" placeholder="Vazifa haqida batafsil..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Muhimlik</label>
+                            <select class="form-select" id="taskPriority">
+                                <option value="low">Past</option>
+                                <option value="medium" selected>O'rta</option>
+                                <option value="high">Yuqori</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Muddat</label>
+                            <input type="date" class="form-input" id="taskDeadline">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Vazifa Qo'shish
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Vazifalar Ro'yxati</h3>
+                    </div>
+                    
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" id="taskSearch" placeholder="Vazifalarni qidirish...">
+                        </div>
+                        <select class="form-select filter-select" id="taskFilter">
+                            <option value="all">Barcha vazifalar</option>
+                            <option value="high">Yuqori muhimlik</option>
+                            <option value="medium">O'rta muhimlik</option>
+                            <option value="low">Past muhimlik</option>
+                            <option value="completed">Bajarilgan</option>
+                            <option value="pending">Kutilayotgan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-2" id="tasksList">
+                        <div class="empty-state">
+                            <div class="empty-icon">✅</div>
+                            <div class="empty-title">Hali vazifa yo'q</div>
+                            <div class="empty-description">Birinchi vazifangizni qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div class="page" id="analytics">
+                <div class="page-header">
+                    <h1 class="page-title">Statistika 📊</h1>
+                    <p class="page-subtitle">Faoliyatingizni tahlil qiling</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="weeklyTasks">0</div>
+                        <div class="stat-label">Bu hafta bajarilgan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="monthlyTasks">0</div>
+                        <div class="stat-label">Bu oy bajarilgan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="averageDaily">0</div>
+                        <div class="stat-label">Kunlik o'rtacha</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="streak">0</div>
+                        <div class="stat-label">Ketma-ket kunlar</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Vazifalar Taqsimoti
+                            </h3>
+                        </div>
+                        <div id="taskDistribution">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 0%"></div>
+                            </div>
+                            <p>Bajarilgan: <span id="completedPercentage">0%</span></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-calendar-alt"></i>
+                                Haftalik Faollik
+                            </h3>
+                        </div>
+                        <div id="weeklyActivity">
+                            <div class="empty-state">
+                                <div class="empty-icon">📈</div>
+                                <div class="empty-title">Ma'lumot yo'q</div>
+                                <div class="empty-description">Vazifalar bajarib statistika to'plang</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="editModalTitle">Tahrirlash</h3>
+                <button class="modal-close" id="closeEditModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="editModalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div id="notificationMessage"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let userData = {
+            projects: [],
+            exercises: [],
+            tasks: [],
+            settings: {
+                theme: 'light',
+                notifications: true
+            }
+        };
+
+        let currentEditItem = null;
+        let currentEditType = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setupEventListeners();
+            updateStats();
+            updateDashboard();
+        });
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('ultraPersonalSiteData');
+            if (saved) {
+                userData = { ...userData, ...JSON.parse(saved) };
+            }
+            renderAll();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('ultraPersonalSiteData', JSON.stringify(userData));
+            updateStats();
+            updateDashboard();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Sidebar toggle
+            document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+            
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', handleNavigation);
+            });
+
+            // Forms
+            document.getElementById('projectForm').addEventListener('submit', handleProjectSubmit);
+            document.getElementById('exerciseForm').addEventListener('submit', handleExerciseSubmit);
+            document.getElementById('taskForm').addEventListener('submit', handleTaskSubmit);
+
+            // Search and filter
+            document.getElementById('projectSearch').addEventListener('input', filterProjects);
+            document.getElementById('projectFilter').addEventListener('change', filterProjects);
+            document.getElementById('exerciseSearch').addEventListener('input', filterExercises);
+            document.getElementById('exerciseFilter').addEventListener('change', filterExercises);
+            document.getElementById('taskSearch').addEventListener('input', filterTasks);
+            document.getElementById('taskFilter').addEventListener('change', filterTasks);
+
+            // File upload
+            setupFileUpload();
+
+            // Modal
+            document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) closeEditModal();
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.querySelector('.toggle-btn i');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                icon.className = 'fas fa-chevron-right';
+            } else {
+                icon.className = 'fas fa-chevron-left';
+            }
+        }
+
+        // Handle navigation
+        function handleNavigation(e) {
+            e.preventDefault();
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            
+            // Show corresponding page
+            const targetPage = e.target.getAttribute('data-page');
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(targetPage).classList.add('active');
+        }
+
+        // Handle project form submission
+        function handleProjectSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('projectTitle').value.trim();
+            const description = document.getElementById('projectDescription').value.trim();
+            const priority = document.getElementById('projectPriority').value;
+            const fileInput = document.getElementById('projectFile');
+            
+            if (!title) {
+                showNotification('Loyiha nomini kiriting!', 'error');
+                return;
+            }
+            
+            const project = {
+                id: Date.now(),
+                title,
+                description,
+                priority,
+                fileName: fileInput.files[0] ? fileInput.files[0].name : null,
+                createdAt: new Date().toISOString(),
+                completed: false
+            };
+            
+            userData.projects.push(project);
+            saveData();
+            renderProjects();
+            
+            // Reset form
+            document.getElementById('projectForm').reset();
+            
+            showNotification('Loyiha muvaffaqiyatli qo\'shildi!', 'success');
+        }
+
+        // Handle exercise form submission
+        function handleExerciseSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('exerciseName').value.trim();
+            const category = document.getElementById('exerciseCategory').value;
+            const duration = document.getElementById('exerciseDuration').value;
+            
+            if (!name) {
+                showNotification('Mashq nomini kiriting!', 'error');
+                return;
+            }
+            
+            const exercise = {
+                id: Date.now(),
+                name,
+                category,
+                duration: duration ? parseInt(duration) : null,
+                createdAt: new Date().toISOString(),
+                completed: false,
+                completedAt: null
+            };
+            
+            userData.exercises.push(exercise);
+            saveData();
+            renderExercises();
+            
+            // Reset form
+            document.getElementById('exerciseForm').reset();
+            
+            showNotification('Mashq muvaffaqiyatli qo\'shildi!', 'success');
+        }
+
+        // Handle task form submission
+        function handleTaskSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('taskName').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const priority = document.getElementById('taskPriority').value;
+            const deadline = document.getElementById('taskDeadline').value;
+            
+            if (!name) {
+                showNotification('Vazifa nomini kiriting!', 'error');
+                return;
+            }
+            
+            const task = {
+                id: Date.now(),
+                name,
+                description,
+                priority,
+                deadline: deadline || null,
+                createdAt: new Date().toISOString(),
+                completed: false,
+                completedAt: null
+            };
+            
+            userData.tasks.push(task);
+            saveData();
+            renderTasks();
+            
+            // Reset form
+            document.getElementById('taskForm').reset();
+            
+            showNotification('Vazifa muvaffaqiyatli qo\'shildi!', 'success');
+        }
+
+        // Render all data
+        function renderAll() {
+            renderProjects();
+            renderExercises();
+            renderTasks();
+        }
+
+        // Render projects
+        function renderProjects() {
+            const container = document.getElementById('projectsList');
+            
+            if (userData.projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <div class="empty-title">Hali loyiha yo'q</div>
+                        <div class="empty-description">Birinchi loyihangizni qo'shing</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = userData.projects.map(project => `
+                <div class="item ${project.completed ? 'completed' : ''}" draggable="true" data-id="${project.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${project.completed ? 'checked' : ''} 
+                               onchange="toggleProjectComplete(${project.id})">
+                        <div class="item-content">
+                            <div class="item-title">${project.title}</div>
+                            ${project.description ? `<div class="item-description">${project.description}</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editProject(${project.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteProject(${project.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-flag"></i> ${getPriorityText(project.priority)}</span>
+                        ${project.fileName ? `<span><i class="fas fa-file"></i> ${project.fileName}</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(project.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            setupDragAndDrop();
+        }
+
+        // Render exercises
+        function renderExercises() {
+            const container = document.getElementById('exercisesList');
+            
+            if (userData.exercises.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💪</div>
+                        <div class="empty-title">Hali mashq yo'q</div>
+                        <div class="empty-description">Birinchi mashqingizni qo'shing</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = userData.exercises.map(exercise => `
+                <div class="item ${exercise.completed ? 'completed' : ''}" draggable="true" data-id="${exercise.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${exercise.completed ? 'checked' : ''} 
+                               onchange="toggleExerciseComplete(${exercise.id})">
+                        <div class="item-content">
+                            <div class="item-title">${exercise.name}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editExercise(${exercise.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteExercise(${exercise.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-tag"></i> ${getCategoryText(exercise.category)}</span>
+                        ${exercise.duration ? `<span><i class="fas fa-clock"></i> ${exercise.duration} daq</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(exercise.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            setupDragAndDrop();
+        }
+
+        // Render tasks
+        function renderTasks() {
+            const container = document.getElementById('tasksList');
+            
+            if (userData.tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✅</div>
+                        <div class="empty-title">Hali vazifa yo'q</div>
+                        <div class="empty-description">Birinchi vazifangizni qo'shing</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = userData.tasks.map(task => `
+                <div class="item ${task.completed ? 'completed' : ''}" draggable="true" data-id="${task.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTaskComplete(${task.id})">
+                        <div class="item-content">
+                            <div class="item-title">${task.name}</div>
+                            ${task.description ? `<div class="item-description">${task.description}</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editTask(${task.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteTask(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-flag"></i> ${getPriorityText(task.priority)}</span>
+                        ${task.deadline ? `<span><i class="fas fa-calendar-alt"></i> ${formatDate(task.deadline)}</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(task.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            setupDragAndDrop();
+        }
+
+        // Toggle completion functions
+        function toggleProjectComplete(id) {
+            const project = userData.projects.find(p => p.id === id);
+            if (project) {
+                project.completed = !project.completed;
+                project.completedAt = project.completed ? new Date().toISOString() : null;
+                saveData();
+                renderProjects();
+                showNotification(project.completed ? 'Loyiha bajarildi!' : 'Loyiha qayta faollashtirildi!', 'success');
+            }
+        }
+
+        function toggleExerciseComplete(id) {
+            const exercise = userData.exercises.find(e => e.id === id);
+            if (exercise) {
+                exercise.completed = !exercise.completed;
+                exercise.completedAt = exercise.completed ? new Date().toISOString() : null;
+                saveData();
+                renderExercises();
+                showNotification(exercise.completed ? 'Mashq bajarildi!' : 'Mashq qayta faollashtirildi!', 'success');
+            }
+        }
+
+        function toggleTaskComplete(id) {
+            const task = userData.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                task.completedAt = task.completed ? new Date().toISOString() : null;
+                saveData();
+                renderTasks();
+                showNotification(task.completed ? 'Vazifa bajarildi!' : 'Vazifa qayta faollashtirildi!', 'success');
+            }
+        }
+
+        // Delete functions
+        function deleteProject(id) {
+            if (confirm('Loyihani o\'chirishni xohlaysizmi?')) {
+                userData.projects = userData.projects.filter(p => p.id !== id);
+                saveData();
+                renderProjects();
+                showNotification('Loyiha o\'chirildi!', 'success');
+            }
+        }
+
+        function deleteExercise(id) {
+            if (confirm('Mashqni o\'chirishni xohlaysizmi?')) {
+                userData.exercises = userData.exercises.filter(e => e.id !== id);
+                saveData();
+                renderExercises();
+                showNotification('Mashq o\'chirildi!', 'success');
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Vazifani o\'chirishni xohlaysizmi?')) {
+                userData.tasks = userData.tasks.filter(t => t.id !== id);
+                saveData();
+                renderTasks();
+                showNotification('Vazifa o\'chirildi!', 'success');
+            }
+        }
+
+        // Edit functions
+        function editProject(id) {
+            const project = userData.projects.find(p => p.id === id);
+            if (!project) return;
+            
+            currentEditItem = project;
+            currentEditType = 'project';
+            
+            document.getElementById('editModalTitle').textContent = 'Loyihani Tahrirlash';
+            document.getElementById('editModalBody').innerHTML = `
+                <form id="editProjectForm">
+                    <div class="form-group">
+                        <label class="form-label">Loyiha nomi *</label>
+                        <input type="text" class="form-input" id="editProjectTitle" value="${project.title}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tavsif</label>
+                        <textarea class="form-textarea" id="editProjectDescription">${project.description || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Muhimlik darajasi</label>
+                        <select class="form-select" id="editProjectPriority">
+                            <option value="low" ${project.priority === 'low' ? 'selected' : ''}>Past</option>
+                            <option value="medium" ${project.priority === 'medium' ? 'selected' : ''}>O'rta</option>
+                            <option value="high" ${project.priority === 'high' ? 'selected' : ''}>Yuqori</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Bekor qilish</button>
+                        <button type="submit" class="btn btn-primary">Saqlash</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('editModal').classList.add('active');
+            
+            document.getElementById('editProjectForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                project.title = document.getElementById('editProjectTitle').value.trim();
+                project.description = document.getElementById('editProjectDescription').value.trim();
+                project.priority = document.getElementById('editProjectPriority').value;
+                
+                saveData();
+                renderProjects();
+                closeEditModal();
+                showNotification('Loyiha yangilandi!', 'success');
+            });
+        }
+
+        function editExercise(id) {
+            const exercise = userData.exercises.find(e => e.id === id);
+            if (!exercise) return;
+            
+            currentEditItem = exercise;
+            currentEditType = 'exercise';
+            
+            document.getElementById('editModalTitle').textContent = 'Mashqni Tahrirlash';
+            document.getElementById('editModalBody').innerHTML = `
+                <form id="editExerciseForm">
+                    <div class="form-group">
+                        <label class="form-label">Mashq nomi *</label>
+                        <input type="text" class="form-input" id="editExerciseName" value="${exercise.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kategoriya</label>
+                        <select class="form-select" id="editExerciseCategory">
+                            <option value="cardio" ${exercise.category === 'cardio' ? 'selected' : ''}>Kardio</option>
+                            <option value="strength" ${exercise.category === 'strength' ? 'selected' : ''}>Kuch</option>
+                            <option value="flexibility" ${exercise.category === 'flexibility' ? 'selected' : ''}>Moslashuvchanlik</option>
+                            <option value="sports" ${exercise.category === 'sports' ? 'selected' : ''}>Sport</option>
+                            <option value="other" ${exercise.category === 'other' ? 'selected' : ''}>Boshqa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Davomiyligi (daqiqa)</label>
+                        <input type="number" class="form-input" id="editExerciseDuration" value="${exercise.duration || ''}" min="1">
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Bekor qilish</button>
+                        <button type="submit" class="btn btn-primary">Saqlash</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('editModal').classList.add('active');
+            
+            document.getElementById('editExerciseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                exercise.name = document.getElementById('editExerciseName').value.trim();
+                exercise.category = document.getElementById('editExerciseCategory').value;
+                exercise.duration = document.getElementById('editExerciseDuration').value ? 
+                    parseInt(document.getElementById('editExerciseDuration').value) : null;
+                
+                saveData();
+                renderExercises();
+                closeEditModal();
+                showNotification('Mashq yangilandi!', 'success');
+            });
+        }
+
+        function editTask(id) {
+            const task = userData.tasks.find(t => t.id === id);
+            if (!task) return;
+            
+            currentEditItem = task;
+            currentEditType = 'task';
+            
+            document.getElementById('editModalTitle').textContent = 'Vazifani Tahrirlash';
+            document.getElementById('editModalBody').innerHTML = `
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label class="form-label">Vazifa nomi *</label>
+                        <input type="text" class="form-input" id="editTaskName" value="${task.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tavsif</label>
+                        <textarea class="form-textarea" id="editTaskDescription">${task.description || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Muhimlik</label>
+                        <select class="form-select" id="editTaskPriority">
+                            <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Past</option>
+                            <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>O'rta</option>
+                            <option value="high" ${task.priority === 'high' ? 'selected' : ''}>Yuqori</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Muddat</label>
+                        <input type="date" class="form-input" id="editTaskDeadline" value="${task.deadline || ''}">
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Bekor qilish</button>
+                        <button type="submit" class="btn btn-primary">Saqlash</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('editModal').classList.add('active');
+            
+            document.getElementById('editTaskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                task.name = document.getElementById('editTaskName').value.trim();
+                task.description = document.getElementById('editTaskDescription').value.trim();
+                task.priority = document.getElementById('editTaskPriority').value;
+                task.deadline = document.getElementById('editTaskDeadline').value || null;
+                
+                saveData();
+                renderTasks();
+                closeEditModal();
+                showNotification('Vazifa yangilandi!', 'success');
+            });
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditItem = null;
+            currentEditType = null;
+        }
+
+        // Filter functions
+        function filterProjects() {
+            const searchTerm = document.getElementById('projectSearch').value.toLowerCase();
+            const filterValue = document.getElementById('projectFilter').value;
+            
+            let filteredProjects = userData.projects;
+            
+            if (searchTerm) {
+                filteredProjects = filteredProjects.filter(project => 
+                    project.title.toLowerCase().includes(searchTerm) ||
+                    (project.description && project.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filterValue !== 'all') {
+                filteredProjects = filteredProjects.filter(project => project.priority === filterValue);
+            }
+            
+            renderFilteredProjects(filteredProjects);
+        }
+
+        function filterExercises() {
+            const searchTerm = document.getElementById('exerciseSearch').value.toLowerCase();
+            const filterValue = document.getElementById('exerciseFilter').value;
+            
+            let filteredExercises = userData.exercises;
+            
+            if (searchTerm) {
+                filteredExercises = filteredExercises.filter(exercise => 
+                    exercise.name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filterValue === 'completed') {
+                filteredExercises = filteredExercises.filter(exercise => exercise.completed);
+            } else if (filterValue === 'pending') {
+                filteredExercises = filteredExercises.filter(exercise => !exercise.completed);
+            }
+            
+            renderFilteredExercises(filteredExercises);
+        }
+
+        function filterTasks() {
+            const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
+            const filterValue = document.getElementById('taskFilter').value;
+            
+            let filteredTasks = userData.tasks;
+            
+            if (searchTerm) {
+                filteredTasks = filteredTasks.filter(task => 
+                    task.name.toLowerCase().includes(searchTerm) ||
+                    (task.description && task.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filterValue === 'completed') {
+                filteredTasks = filteredTasks.filter(task => task.completed);
+            } else if (filterValue === 'pending') {
+                filteredTasks = filteredTasks.filter(task => !task.completed);
+            } else if (filterValue !== 'all') {
+                filteredTasks = filteredTasks.filter(task => task.priority === filterValue);
+            }
+            
+            renderFilteredTasks(filteredTasks);
+        }
+
+        function renderFilteredProjects(projects) {
+            const container = document.getElementById('projectsList');
+            
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">Hech narsa topilmadi</div>
+                        <div class="empty-description">Qidiruv shartlarini o'zgartiring</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = projects.map(project => `
+                <div class="item ${project.completed ? 'completed' : ''}" draggable="true" data-id="${project.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${project.completed ? 'checked' : ''} 
+                               onchange="toggleProjectComplete(${project.id})">
+                        <div class="item-content">
+                            <div class="item-title">${project.title}</div>
+                            ${project.description ? `<div class="item-description">${project.description}</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editProject(${project.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteProject(${project.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-flag"></i> ${getPriorityText(project.priority)}</span>
+                        ${project.fileName ? `<span><i class="fas fa-file"></i> ${project.fileName}</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(project.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFilteredExercises(exercises) {
+            const container = document.getElementById('exercisesList');
+            
+            if (exercises.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">Hech narsa topilmadi</div>
+                        <div class="empty-description">Qidiruv shartlarini o'zgartiring</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = exercises.map(exercise => `
+                <div class="item ${exercise.completed ? 'completed' : ''}" draggable="true" data-id="${exercise.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${exercise.completed ? 'checked' : ''} 
+                               onchange="toggleExerciseComplete(${exercise.id})">
+                        <div class="item-content">
+                            <div class="item-title">${exercise.name}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editExercise(${exercise.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteExercise(${exercise.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-tag"></i> ${getCategoryText(exercise.category)}</span>
+                        ${exercise.duration ? `<span><i class="fas fa-clock"></i> ${exercise.duration} daq</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(exercise.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFilteredTasks(tasks) {
+            const container = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">Hech narsa topilmadi</div>
+                        <div class="empty-description">Qidiruv shartlarini o'zgartiring</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = tasks.map(task => `
+                <div class="item ${task.completed ? 'completed' : ''}" draggable="true" data-id="${task.id}">
+                    <div class="item-header">
+                        <input type="checkbox" class="item-checkbox" ${task.completed ? 'checked' : ''} 
+                               onchange="toggleTaskComplete(${task.id})">
+                        <div class="item-content">
+                            <div class="item-title">${task.name}</div>
+                            ${task.description ? `<div class="item-description">${task.description}</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit" onclick="editTask(${task.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteTask(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-meta">
+                        <span><i class="fas fa-flag"></i> ${getPriorityText(task.priority)}</span>
+                        ${task.deadline ? `<span><i class="fas fa-calendar-alt"></i> ${formatDate(task.deadline)}</span>` : ''}
+                        <span><i class="fas fa-calendar"></i> ${formatDate(task.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalProjects').textContent = userData.projects.length;
+            document.getElementById('totalExercises').textContent = userData.exercises.length;
+            document.getElementById('totalTasks').textContent = userData.tasks.length;
+            
+            const totalItems = userData.projects.length + userData.exercises.length + userData.tasks.length;
+            const completedItems = userData.projects.filter(p => p.completed).length + 
+                                 userData.exercises.filter(e => e.completed).length + 
+                                 userData.tasks.filter(t => t.completed).length;
+            
+            const completionRate = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+            
+            // Update analytics page
+            updateAnalytics();
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const today = new Date().toDateString();
+            const todayTasks = userData.tasks.filter(task => 
+                new Date(task.createdAt).toDateString() === today && !task.completed
+            );
+            
+            const todayTasksContainer = document.getElementById('todayTasks');
+            
+            if (todayTasks.length === 0) {
+                todayTasksContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">Bugun uchun vazifa yo'q</div>
+                        <div class="empty-description">Yangi vazifa qo'shing</div>
+                    </div>
+                `;
+            } else {
+                todayTasksContainer.innerHTML = todayTasks.slice(0, 3).map(task => `
+                    <div class="item">
+                        <div class="item-header">
+                            <input type="checkbox" class="item-checkbox" onchange="toggleTaskComplete(${task.id})">
+                            <div class="item-content">
+                                <div class="item-title">${task.name}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Update analytics
+        function updateAnalytics() {
+            const now = new Date();
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            const weeklyTasks = userData.tasks.filter(task => 
+                task.completed && new Date(task.completedAt) >= weekAgo
+            ).length;
+            
+            const monthlyTasks = userData.tasks.filter(task => 
+                task.completed && new Date(task.completedAt) >= monthAgo
+            ).length;
+            
+            document.getElementById('weeklyTasks').textContent = weeklyTasks;
+            document.getElementById('monthlyTasks').textContent = monthlyTasks;
+            document.getElementById('averageDaily').textContent = Math.round(monthlyTasks / 30);
+            
+            // Update progress bar
+            const totalTasks = userData.tasks.length;
+            const completedTasks = userData.tasks.filter(t => t.completed).length;
+            const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+            
+            document.querySelector('.progress-bar').style.width = percentage + '%';
+            document.getElementById('completedPercentage').textContent = Math.round(percentage) + '%';
+        }
+
+        // Setup file upload
+        function setupFileUpload() {
+            const fileUpload = document.getElementById('fileUpload');
+            const fileInput = document.getElementById('projectFile');
+            
+            fileUpload.addEventListener('click', () => fileInput.click());
+            
+            fileUpload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUpload.classList.add('dragover');
+            });
+            
+            fileUpload.addEventListener('dragleave', () => {
+                fileUpload.classList.remove('dragover');
+            });
+            
+            fileUpload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUpload.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateFileUploadText(files[0].name);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    updateFileUploadText(e.target.files[0].name);
+                }
+            });
+        }
+
+        function updateFileUploadText(fileName) {
+            const uploadText = document.querySelector('.upload-text');
+            uploadText.textContent = `Tanlangan: ${fileName}`;
+        }
+
+        // Setup drag and drop for items
+        function setupDragAndDrop() {
+            const items = document.querySelectorAll('.item[draggable="true"]');
+            
+            items.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    item.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', item.dataset.id);
+                });
+                
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            messageEl.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle keyboard shortcuts
+        function handleKeyboardShortcuts(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        document.querySelector('[data-page="dashboard"]').click();
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        document.querySelector('[data-page="projects"]').click();
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        document.querySelector('[data-page="exercises"]').click();
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        document.querySelector('[data-page="tasks"]').click();
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        document.querySelector('[data-page="analytics"]').click();
+                        break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+        }
+
+        // Helper functions
+        function getPriorityText(priority) {
+            const priorities = {
+                low: 'Past',
+                medium: 'O\'rta',
+                high: 'Yuqori'
+            };
+            return priorities[priority] || priority;
+        }
+
+        function getCategoryText(category) {
+            const categories = {
+                cardio: 'Kardio',
+                strength: 'Kuch',
+                flexibility: 'Moslashuvchanlik',
+                sports: 'Sport',
+                other: 'Boshqa'
+            };
+            return categories[category] || category;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('uz-UZ');
+        }
+    </script>
+</body>
+</html>
